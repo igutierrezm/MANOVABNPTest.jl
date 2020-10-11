@@ -1,4 +1,4 @@
-module GGA_MANOVA_DDP
+module MANOVABNPTest
 
 # Imports
 using Distributions: Beta, Gamma
