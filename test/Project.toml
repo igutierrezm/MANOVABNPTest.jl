@@ -1,0 +1,10 @@
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+
+[compat]
+DataFrames = "0.21"
+StaticArrays = "0.12"
+StatsBase = "0.33"
+julia = "1"
