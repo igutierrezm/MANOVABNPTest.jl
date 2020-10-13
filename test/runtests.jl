@@ -9,7 +9,6 @@ function test_sample(h::Int, l::Int, H0::Int)
         1.051 1.994 1.652
     ]
     γ = γvector(4, H0)
-    # γ = [1, 1, 1, 1]
     Σ = cholesky([1.0 0.3; 0.3 1.0])
     x = 1 .+ (0:N[h]-1) .% 4
     y = rand(N[h], 2) * Σ.U
@@ -22,5 +21,6 @@ function test_sample(h::Int, l::Int, H0::Int)
     y = (y .- ȳ) / cholesky(S).U
     return y, x
 end
-y, x = test_sample(1, 1, 1);
-train(randn(10, 2), collect(1:10))
+y, x = test_sample(1, 1, 8);
+println(train(y, x))
+1+1

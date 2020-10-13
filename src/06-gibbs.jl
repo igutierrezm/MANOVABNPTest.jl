@@ -106,7 +106,9 @@ function train(
     S0::Matrix{Float64} = Matrix{Float64}(I(size(y, 2))), 
     a0::Float64 = 1.0, 
     b0::Float64 = 1.0, 
-    z0::Float64 = 1.0
+    z0::Float64 = 1.0,
+    iter::Int   = 4000,
+    warmup::Int = iter ÷ 2   
 )
     N, D = size(y)
     m = MANOVABNPTest.Model(
@@ -120,5 +122,5 @@ function train(
         ζ0 = z0
     )
     ystatic = [SVector{D}(y[i, :]) for i in 1:size(y, 1)]
-    MANOVABNPTest.fit(m, ystatic, x; iter = 4000)
+    MANOVABNPTest.fit(m, ystatic, x; iter = iter, warmup = warmup)
 end
