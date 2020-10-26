@@ -30,6 +30,16 @@ function update_z!(c::ChainState, s::SuffStats{A, B, C}) where {A, B, C}
     end
 end
 
+function update_θ!(c::ChainState, s::SuffStats{A, B, C}) where {A, B, C}
+    @unpack J, u, ν, r, S, Σ, μ = s
+    @unpack O = c
+    for k in O, j ∈ 1:J
+        Σ[j, k] = rand(InverseWishart(ν[j, k], S[j, k]))
+        Σ[j, k] = (Σ[j, k] + Σ[j, k]') / 2
+        μ[j, k] = rand(MvNormal(u[j, k], Σ[j, k] / r[j, k]))
+    end
+end
+
 function update_γ!(
     c::ChainState, 
     s::SuffStats{A, B, C}, 
@@ -91,10 +101,96 @@ function fit(
         update_z!(c, s)
         update_α!(c, s)
         update_γ!(c, s, pγ0)
-        t > warmup || continue 
-        pγ1[γcode(c.γ)] += 1        
+        t > warmup || continue
+        pγ1[γcode(c.γ)] += 1
     end
     return pγ1
+end
+
+function fit(
+    m::Model{A, B},
+    y::Vector{C},
+    x::Vector{Int},
+    grid::Vector{Float64};
+    iter::Int = 4000, 
+    warmup::Int = iter ÷ 2
+) where {A, B, C}
+    # Initialization
+    D = length(y[1])
+    J = length(unique(x))
+    s = SuffStats(m = m, y = y, x = x)
+    c = ChainState(N = s.N, J = s.J)
+    pγ1 = zeros(Int, 2^(s.J - 1))
+    pγ0 = ph0(s.J - 1, 1.0)
+    ygrid = Iterators.product(fill(grid, 2)...)
+    ygrid = collect.(ygrid)[:] |> x -> hcat(x...)
+    fgrid = [zeros(size(ygrid, 2)) for j = 1:J, z1 in 1:D, z2 in 1:D]
+    M = size(ygrid, 2)
+    N = s.N
+
+    # Updating
+    @unpack γ, α, O = c
+    @unpack n, μ, Σ = s
+    @unpack r0, u0, ν0, S0 = m
+    r1 = r0 + 1
+    ν1 = ν0 + 1
+    u1 = deepcopy(u0)
+    S1 = deepcopy(S0)
+    ggrid = zeros(M)
+    yi = zeros(D)
+    @fastmath for t ∈ 1:iter
+        suffstats!(s, c)
+        update_z!(c, s)
+        update_θ!(c, s)
+        update_α!(c, s)
+        update_γ!(c, s, pγ0)
+        t > warmup || continue
+        pγ1[γcode(c.γ)] += 1
+
+        # Compute a base contribution to f(y)
+        for i in 1:M
+            S1.factors .= S0.factors
+            yi .= ygrid[:, i]
+            u1 .= (r0 * u0 + yi) / r1
+            u1 .= (yi - u1) * √(r1 / r0)
+            lowrankupdate!(S1, u1)
+            ggrid[i] =
+                0.5ν0 * logdet(S0) -
+                0.5ν1 * logdet(S1) +
+                logmvgamma(D, ν1 / 2) -
+                logmvgamma(D, ν0 / 2) +
+                0.5D * log(r0 / r1) -
+                0.5D * log(π) * (r1 - r0)
+            ggrid[i] = exp(ggrid[i])
+        end
+
+        # Accumulate f(y)
+        μsub = [0.0; 0.0]
+        Σsub = [1.0 0.0; 0.0 1.0]
+        for j = 1:J, z1 = 1:D, z2 = z1+1:D
+            for k in O
+                μsub .= μ[j^γ[j], k][[z1; z2]]
+                Σsub .= Σ[j^γ[j], k][[z1; z2], [z1; z2]]
+                fgrid[j, z1, z2] += pdf(MvNormal(μsub, Σsub), ygrid) * n[k] / (N + α[1])
+            end
+            fgrid[j, z1, z2] += ggrid * α[1] / (N + α[1])
+        end
+    end
+
+    # Convert fgrid into a dataframe
+    dfs = [
+        DataFrame(
+            j    = j, 
+            var1 = z1, 
+            var2 = z2, 
+            y1   = ygrid[1, :],
+            y2   = ygrid[2, :],
+            f    = fgrid[j, z1, z2] / (iter - warmup)
+        ) for j = 1:J, z1 = 1:D, z2 = 1:D
+    ]
+    df = reduce(vcat, dfs)
+    filter!([:var1, :var2] => (x, y) -> x < y, df)
+    return pγ1, df
 end
 
 function train(

@@ -6,15 +6,17 @@
     m::Model{A, B}
     y::Vector{C}
     x::Vector{Int}
-    K̄::Int         = 64
-    N::Int         = length(y)
-    J::Int         = maximum(x)
-    D::Int         = length(y[1])
-    n::Vector{Int} = zeros(Int, K̄)        
-    r::Matrix{Int} = [m.r0 for j = 1:J, k ∈ 1:K̄]        
-    ν::Matrix{Int} = [m.ν0 for j = 1:J, k ∈ 1:K̄]        
-    u::Matrix{A}   = [deepcopy(m.u0) for j = 1:J, k ∈ 1:K̄]    
-    S::Matrix{B}   = [deepcopy(m.S0) for j = 1:J, k ∈ 1:K̄] 
+    K̄::Int                     = 64
+    N::Int                     = length(y)
+    J::Int                     = maximum(x)
+    D::Int                     = length(y[1])
+    n::Vector{Int}             = zeros(Int, K̄)        
+    r::Matrix{Int}             = [m.r0 for j = 1:J, k ∈ 1:K̄]        
+    ν::Matrix{Int}             = [m.ν0 for j = 1:J, k ∈ 1:K̄]        
+    u::Matrix{A}               = [deepcopy(m.u0) for j = 1:J, k ∈ 1:K̄]    
+    S::Matrix{B}               = [deepcopy(m.S0) for j = 1:J, k ∈ 1:K̄]
+    Σ::Matrix{Matrix{Float64}} = [zeros(D, D) for j = 1:J, k ∈ 1:K̄]
+    μ::Matrix{Vector{Float64}} = [zeros(D) for j = 1:J, k ∈ 1:K̄]
 end
 
 """

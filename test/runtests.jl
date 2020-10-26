@@ -1,6 +1,18 @@
 using MANOVABNPTest
 using StatsBase, LinearAlgebra, StaticArrays
 
+function γvector(J, code)
+    γ = zeros(Int, J)
+    code -= 1
+    for j = J:-1:2
+        if (code ÷ 2^(j-2)) > 0
+            code -= 2^(j-2)
+            γ[j] = 1
+        end
+    end
+    return γ
+end
+
 function test_sample(h::Int, l::Int, H0::Int)
     N = 4 * [50, 150, 300]
     K = [
@@ -19,8 +31,13 @@ function test_sample(h::Int, l::Int, H0::Int)
     end
     ȳ, S = mean_and_cov(y)
     y = (y .- ȳ) / cholesky(S).U
+    y = [SVector{2}(y[i, :]) for i ∈ 1:N[h]]
     return y, x
 end
-y, x = test_sample(1, 1, 8);
-println(train(y, x))
-1+1
+
+y, x = test_sample(1, 1, 1)
+m = MANOVABNPTest.Model(D = 2)
+pγ1 = MANOVABNPTest.fit(m, y, x; iter = 1000)
+grid = LinRange(-3, 3, 10) |> collect
+m = MANOVABNPTest.Model(D = 2)
+pγ1, fgrid = MANOVABNPTest.fit(m, y, x, grid; iter = 1000);

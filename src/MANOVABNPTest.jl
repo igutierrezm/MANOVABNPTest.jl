@@ -1,7 +1,8 @@
 module MANOVABNPTest
 
 # Imports
-using Distributions: Beta, Gamma
+using DataFrames: DataFrame, filter!
+using Distributions: Beta, Gamma, InverseWishart, MvNormal, pdf
 using LinearAlgebra: cholesky, I, lowrankupdate!, lowrankdowndate!, logdet
 using OffsetArrays: OffsetArray
 using Parameters: @with_kw, @unpack
