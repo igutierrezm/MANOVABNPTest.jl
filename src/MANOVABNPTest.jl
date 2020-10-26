@@ -8,6 +8,7 @@ using OffsetArrays: OffsetArray
 using Parameters: @with_kw, @unpack
 using StaticArrays: MMatrix, MVector, SVector, @MVector, @MMatrix
 using StatsFuns: logmvgamma
+using StatsBase; standardize, ZScoreTransform
 using Random: shuffle!
 
 # Write your package code here.

@@ -194,30 +194,31 @@ function fit(
     return pγ1, df
 end
 
-# function train(
-#     y::Matrix{Float64}, 
-#     x::Vector{Int}; 
-#     r0::Int = 1, 
-#     v0::Int = size(y, 2) + 2, 
-#     u0::Vector{Float64} = zeros(size(y, 2)), 
-#     S0::Matrix{Float64} = Matrix{Float64}(I(size(y, 2))), 
-#     a0::Float64 = 1.0, 
-#     b0::Float64 = 1.0, 
-#     z0::Float64 = 1.0,
-#     iter::Int   = 4000,
-#     warmup::Int = iter ÷ 2   
-# )
-#     N, D = size(y)
-#     m = MANOVABNPTest.Model(
-#         D  = D,
-#         r0 = r0,
-#         ν0 = v0,
-#         u0 = u0,
-#         S0 = cholesky(S0),
-#         a0 = a0,
-#         b0 = b0,
-#         ζ0 = z0
-#     )
-#     ystatic = [SVector{D}(y[i, :]) for i in 1:size(y, 1)]
-#     MANOVABNPTest.fit(m, ystatic, x; iter = iter, warmup = warmup)
-# end
+function train(
+    y::Matrix{Float64}, 
+    x::Vector{Int}; 
+    r0::Int = 1, 
+    v0::Int = size(y, 2) + 2, 
+    u0::Vector{Float64} = zeros(size(y, 2)), 
+    S0::Matrix{Float64} = Matrix{Float64}(I(size(y, 2))), 
+    a0::Float64 = 1.0, 
+    b0::Float64 = 1.0, 
+    z0::Float64 = 1.0,
+    iter::Int   = 4000,
+    warmup::Int = iter ÷ 2   
+)
+    N, D = size(y)
+    m = MANOVABNPTest.Model(
+        D  = D,
+        r0 = r0,
+        ν0 = v0,
+        u0 = u0,
+        S0 = cholesky(S0),
+        a0 = a0,
+        b0 = b0,
+        ζ0 = z0
+    )
+    y = standardize(ZScoreTransform, y, dims = 1)
+    y = [SVector{D}(y[i, :]) for i ∈ 1:N]
+    MANOVABNPTest.fit(m, y, x; iter = iter, warmup = warmup) / (iter - warmup)
+end
