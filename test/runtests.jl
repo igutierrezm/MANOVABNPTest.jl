@@ -57,7 +57,7 @@ end
 
 y, x = test_sample_01(1, 1, 1)
 m = MANOVABNPTest.Model(D = 2)
-pγ1 = MANOVABNPTest.fit(m, y, x; iter = 200)
+pγ1 = MANOVABNPTest.fit(m, y, x; iter = 4000)
 grid = LinRange(-3, 3, 10) |> collect
 m = MANOVABNPTest.Model(D = 2)
 MANOVABNPTest.fit(m, y, x, grid; iter = 200);
