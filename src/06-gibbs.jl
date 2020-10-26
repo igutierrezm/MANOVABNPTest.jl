@@ -224,5 +224,5 @@ function train(
     ps = MANOVABNPTest.fit(m, y, x; iter = iter, warmup = warmup)
     ps = ps / (iter - warmup)
     γs = [γvector(J, u)[2:end] for u in 1:length(ps)]
-    DataFrame(gm = γs, p = ps)
+    DataFrame(hypothesis = γs, prob = ps)
 end
