@@ -21,9 +21,9 @@ function test_sample(h::Int, l::Int, H0::Int)
         1.051 1.994 1.652
     ]
     γ = γvector(4, H0)
-    Σ = cholesky([1.0 0.3; 0.3 1.0])
+    Σ = cholesky(collect(I(3)))
     x = 1 .+ (0:N[h]-1) .% 4
-    y = rand(N[h], 2) * Σ.U
+    y = rand(N[h], 3) * Σ.U
     for i in 1:N[h]
         x[i] == 2 && (y[i, :] .+= K[l, 1] * γ[2])
         x[i] == 3 && (y[i, :] .*= K[l, 2] ^ γ[3])
@@ -31,13 +31,13 @@ function test_sample(h::Int, l::Int, H0::Int)
     end
     ȳ, S = mean_and_cov(y)
     y = (y .- ȳ) / cholesky(S).U
-    y = [SVector{2}(y[i, :]) for i ∈ 1:N[h]]
+    y = [SVector{3}(y[i, :]) for i ∈ 1:N[h]]
     return y, x
 end
 
 y, x = test_sample(1, 1, 1)
-m = MANOVABNPTest.Model(D = 2)
-pγ1 = MANOVABNPTest.fit(m, y, x; iter = 1000)
+m = MANOVABNPTest.Model(D = 3)
+pγ1 = MANOVABNPTest.fit(m, y, x; iter = 200)
 grid = LinRange(-3, 3, 10) |> collect
-m = MANOVABNPTest.Model(D = 2)
-pγ1, fgrid = MANOVABNPTest.fit(m, y, x, grid; iter = 1000);
+m = MANOVABNPTest.Model(D = 3)
+MANOVABNPTest.fit(m, y, x, grid; iter = 200);

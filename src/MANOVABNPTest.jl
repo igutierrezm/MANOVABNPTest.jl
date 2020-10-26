@@ -3,7 +3,7 @@ module MANOVABNPTest
 # Imports
 using DataFrames: DataFrame, filter!
 using Distributions: Beta, Gamma, InverseWishart, MvNormal, pdf
-using LinearAlgebra: cholesky, I, lowrankupdate!, lowrankdowndate!, logdet
+using LinearAlgebra: cholesky, Cholesky, I, lowrankupdate!, lowrankdowndate!, logdet
 using OffsetArrays: OffsetArray
 using Parameters: @with_kw, @unpack
 using StaticArrays: MMatrix, MVector, SVector, @MVector, @MMatrix

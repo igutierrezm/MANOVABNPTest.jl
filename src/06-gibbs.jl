@@ -126,18 +126,19 @@ function fit(
     ygrid = collect.(ygrid)[:] |> x -> hcat(x...)
     fgrid = [zeros(size(ygrid, 2)) for j = 1:J, z1 in 1:D, z2 in 1:D]
     M = size(ygrid, 2)
-    N = s.N
 
     # Updating
     @unpack γ, α, O = c
-    @unpack n, μ, Σ = s
-    @unpack r0, u0, ν0, S0 = m
+    @unpack n, N, μ, Σ = s
+    @unpack r0, ν0 = m
     r1 = r0 + 1
     ν1 = ν0 + 1
-    u1 = deepcopy(u0)
+    u0 = zeros(2)
+    u1 = zeros(2)
+    S0 = Cholesky(m.S0.factors[1:2, 1:2], :U, 0)
     S1 = deepcopy(S0)
     ggrid = zeros(M)
-    yi = zeros(D)
+    yi = zeros(2)
     @fastmath for t ∈ 1:iter
         suffstats!(s, c)
         update_z!(c, s)
@@ -157,10 +158,10 @@ function fit(
             ggrid[i] =
                 0.5ν0 * logdet(S0) -
                 0.5ν1 * logdet(S1) +
-                logmvgamma(D, ν1 / 2) -
-                logmvgamma(D, ν0 / 2) +
-                0.5D * log(r0 / r1) -
-                0.5D * log(π) * (r1 - r0)
+                logmvgamma(2, ν1 / 2) -
+                logmvgamma(2, ν0 / 2) +
+                0.5 * 2 * log(r0 / r1) -
+                0.5 * 2 * log(π) * (r1 - r0)
             ggrid[i] = exp(ggrid[i])
         end
 
@@ -193,30 +194,30 @@ function fit(
     return pγ1, df
 end
 
-function train(
-    y::Matrix{Float64}, 
-    x::Vector{Int}; 
-    r0::Int = 1, 
-    v0::Int = size(y, 2) + 2, 
-    u0::Vector{Float64} = zeros(size(y, 2)), 
-    S0::Matrix{Float64} = Matrix{Float64}(I(size(y, 2))), 
-    a0::Float64 = 1.0, 
-    b0::Float64 = 1.0, 
-    z0::Float64 = 1.0,
-    iter::Int   = 4000,
-    warmup::Int = iter ÷ 2   
-)
-    N, D = size(y)
-    m = MANOVABNPTest.Model(
-        D  = D,
-        r0 = r0,
-        ν0 = v0,
-        u0 = u0,
-        S0 = cholesky(S0),
-        a0 = a0,
-        b0 = b0,
-        ζ0 = z0
-    )
-    ystatic = [SVector{D}(y[i, :]) for i in 1:size(y, 1)]
-    MANOVABNPTest.fit(m, ystatic, x; iter = iter, warmup = warmup)
-end
+# function train(
+#     y::Matrix{Float64}, 
+#     x::Vector{Int}; 
+#     r0::Int = 1, 
+#     v0::Int = size(y, 2) + 2, 
+#     u0::Vector{Float64} = zeros(size(y, 2)), 
+#     S0::Matrix{Float64} = Matrix{Float64}(I(size(y, 2))), 
+#     a0::Float64 = 1.0, 
+#     b0::Float64 = 1.0, 
+#     z0::Float64 = 1.0,
+#     iter::Int   = 4000,
+#     warmup::Int = iter ÷ 2   
+# )
+#     N, D = size(y)
+#     m = MANOVABNPTest.Model(
+#         D  = D,
+#         r0 = r0,
+#         ν0 = v0,
+#         u0 = u0,
+#         S0 = cholesky(S0),
+#         a0 = a0,
+#         b0 = b0,
+#         ζ0 = z0
+#     )
+#     ystatic = [SVector{D}(y[i, :]) for i in 1:size(y, 1)]
+#     MANOVABNPTest.fit(m, ystatic, x; iter = iter, warmup = warmup)
+# end
