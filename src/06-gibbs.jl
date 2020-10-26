@@ -208,6 +208,7 @@ function train(
     warmup::Int = iter ÷ 2   
 )
     N, D = size(y)
+    J = length(unique(x))
     m = MANOVABNPTest.Model(
         D  = D,
         r0 = r0,
@@ -220,5 +221,8 @@ function train(
     )
     y = standardize(ZScoreTransform, y, dims = 1)
     y = [SVector{D}(y[i, :]) for i ∈ 1:N]
-    MANOVABNPTest.fit(m, y, x; iter = iter, warmup = warmup) / (iter - warmup)
+    ps = MANOVABNPTest.fit(m, y, x; iter = iter, warmup = warmup)
+    ps = ps / (iter - warmup)
+    γs = [γvector(J, u)[2:end] for u in 1:length(ps)]
+    DataFrame(gm = γs, p = ps)
 end
