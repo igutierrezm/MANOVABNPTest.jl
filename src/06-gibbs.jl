@@ -3,9 +3,9 @@
     see Sudderth (2006, p. 94, algorithm 2.2)
 """
 function update_z!(c::ChainState, s::SuffStats{A, B, C}) where {A, B, C}
-    @unpack α, z, τ, O, U = c
+    @unpack α, z, τ, O, U, rng = c
     @unpack n = s
-    shuffle!(τ)
+    randperm!(rng, τ)
 
     @inbounds @fastmath for i ∈ τ
         # Initialize the search
@@ -16,13 +16,13 @@ function update_z!(c::ChainState, s::SuffStats{A, B, C}) where {A, B, C}
         # Update zi
         for k ∈ O
             p = log_pl(s, c, i, k) + log(n[k] - (z̄ == k))
-            p = p - log(-log(rand()))
+            p = p - log(-log(rand(rng)))
             p < p̄ && continue
             z[i] = k
             p̄ = p
         end
         p = log_pl(s, c, i, k̄) + log(α[1])
-        p = p - log(-log(rand()))
+        p = p - log(-log(rand(rng)))
         p > p̄ && (z[i] = k̄)
 
         # Update the sufficient statistics
@@ -32,11 +32,11 @@ end
 
 function update_θ!(c::ChainState, s::SuffStats{A, B, C}) where {A, B, C}
     @unpack J, u, ν, r, S, Σ, μ = s
-    @unpack O = c
+    @unpack O, rng = c
     for k in O, j ∈ 1:J
-        Σ[j, k] = rand(InverseWishart(ν[j, k], S[j, k]))
+        Σ[j, k] = rand(rng, InverseWishart(ν[j, k], S[j, k]))
         Σ[j, k] = (Σ[j, k] + Σ[j, k]') / 2
-        μ[j, k] = rand(MvNormal(u[j, k], Σ[j, k] / r[j, k]))
+        μ[j, k] = rand(rng, MvNormal(u[j, k], Σ[j, k] / r[j, k]))
     end
 end
 
@@ -46,7 +46,7 @@ function update_γ!(
     pγ0::OffsetArray{Float64, 1, Vector{Float64}}
 ) where {A, B, C}
     @unpack n, J = s
-    @unpack γ, O = c
+    @unpack γ, O, rng = c
 
     # Resample γ[g], given the other γ's
     for g = 2:J
@@ -68,18 +68,18 @@ function update_γ!(
 
         # log-odds and new γ[g]
         log_odds = log_num - log_den
-        γ[g] = rand() <= 1 / (1 + exp(-log_odds))
+        γ[g] = rand(rng) <= 1 / (1 + exp(-log_odds))
     end
 end
 
 function update_α!(c::ChainState, s::SuffStats{A, B, C}) where {A, B, C}
     @unpack m, N = s
-    @unpack α, K = c
     @unpack a0, b0 = m
+    @unpack α, K, rng = c
 
-    ϕ = rand(Beta(α[1] + 1.0, N))
+    ϕ = rand(rng, Beta(α[1] + 1.0, N))
     ψ = (a0 + K[1] - 1.0) / (N * (b0 - log(ϕ))); ψ = ψ / (1 + ψ)
-    α[1] = rand(Gamma(a0 + K[1] - (rand() > ψ), 1.0 / (b0 - log(ϕ))))
+    α[1] = rand(rng, Gamma(a0 + K[1] - (rand(rng) > ψ), 1.0 / (b0 - log(ϕ))))
 end
 
 function fit(
@@ -87,11 +87,12 @@ function fit(
     y::Vector{C},
     x::Vector{Int};
     iter::Int = 4000, 
-    warmup::Int = iter ÷ 2
+    warmup::Int = iter ÷ 2,
+    rng::MersenneTwister = MersenneTwister()
 ) where {A, B, C}
     # Initialization
     s = SuffStats(m = m, y = y, x = x)
-    c = ChainState(N = s.N, J = s.J)
+    c = ChainState(N = s.N, J = s.J, rng = rng)
     pγ1 = zeros(Int, 2^(s.J - 1))
     pγ0 = ph0(s.J - 1, 1.0)
 
@@ -113,13 +114,14 @@ function fit(
     x::Vector{Int},
     grid::Vector{Float64};
     iter::Int = 4000, 
-    warmup::Int = iter ÷ 2
+    warmup::Int = iter ÷ 2,
+    rng::MersenneTwister = MersenneTwister()
 ) where {A, B, C}
     # Initialization
     D = length(y[1])
     J = length(unique(x))
     s = SuffStats(m = m, y = y, x = x)
-    c = ChainState(N = s.N, J = s.J)
+    c = ChainState(N = s.N, J = s.J, rng = rng)
     pγ1 = zeros(Int, 2^(s.J - 1))
     pγ0 = ph0(s.J - 1, 1.0)
     ygrid = Iterators.product(fill(grid, 2)...)
@@ -205,7 +207,8 @@ function train(
     b0::Float64 = 1.0, 
     z0::Float64 = 1.0,
     iter::Int   = 4000,
-    warmup::Int = iter ÷ 2   
+    warmup::Int = iter ÷ 2,
+    rng::MersenneTwister = MersenneTwister()
 )
     N, D = size(y)
     J = length(unique(x))
@@ -221,7 +224,7 @@ function train(
     )
     y = standardize(ZScoreTransform, y, dims = 1)
     y = [SVector{D}(y[i, :]) for i ∈ 1:N]
-    ps = MANOVABNPTest.fit(m, y, x .+ 1; iter = iter, warmup = warmup)
+    ps = MANOVABNPTest.fit(m, y, x .+ 1; iter = iter, warmup = warmup, rng = rng)
     ps = ps / (iter - warmup)
     γs = [γvector(J, u)[2:end] for u in 1:length(ps)]
     DataFrame(hypothesis = γs, prob = ps)

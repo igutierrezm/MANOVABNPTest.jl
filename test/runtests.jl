@@ -58,10 +58,10 @@ m = MANOVABNPTest.Model(D = 2)
 rng = MersenneTwister(1)
 ChainState(N = 10, J = 4, rng = rng)
 
-# pγ1 = MANOVABNPTest.fit(m, y, x; iter = 4000, rng = rng)
-# grid = LinRange(-3, 3, 10) |> collect
-# m = MANOVABNPTest.Model(D = 2)
-# MANOVABNPTest.fit(m, y, x, grid; iter = 200, rng = rng);
+pγ1 = MANOVABNPTest.fit(m, y, x; iter = 4000, rng = rng)
+grid = LinRange(-3, 3, 10) |> collect
+m = MANOVABNPTest.Model(D = 2)
+MANOVABNPTest.fit(m, y, x, grid; iter = 200, rng = rng);
 
-# y, x = test_sample_02(1, 1, 6)
-# println(MANOVABNPTest.train(y, x, rng = rng))
+y, x = test_sample_02(1, 1, 6)
+println(MANOVABNPTest.train(y, x, rng = rng))
