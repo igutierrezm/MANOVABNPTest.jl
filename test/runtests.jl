@@ -1,5 +1,4 @@
-using MANOVABNPTest
-using StatsBase, LinearAlgebra, StaticArrays
+using MANOVABNPTest, StatsBase, LinearAlgebra, StaticArrays, Random
 
 function γvector(J, code)
     γ = zeros(Int, J)
@@ -54,13 +53,15 @@ function test_sample_02(h::Int, l::Int, H0::Int)
     return y, x
 end
 
-
 y, x = test_sample_01(1, 1, 1)
 m = MANOVABNPTest.Model(D = 2)
-pγ1 = MANOVABNPTest.fit(m, y, x; iter = 4000)
+rng = MersenneTwister(1)
+ChainState(N = 10, J = 4, rng = rng)
+
+pγ1 = MANOVABNPTest.fit(m, y, x; iter = 4000, rng = rng)
 grid = LinRange(-3, 3, 10) |> collect
 m = MANOVABNPTest.Model(D = 2)
-MANOVABNPTest.fit(m, y, x, grid; iter = 200);
+MANOVABNPTest.fit(m, y, x, grid; iter = 200, rng = rng);
 
 y, x = test_sample_02(1, 1, 6)
-println(MANOVABNPTest.train(y, x))
+println(MANOVABNPTest.train(y, x, rng = rng))
