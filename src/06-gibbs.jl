@@ -93,7 +93,7 @@ function fit(
     # Initialization
     s = SuffStats(m = m, y = y, x = x)
     c = ChainState(N = s.N, J = s.J, rng = rng)
-    pγ1 = zeros(Int, 2^(s.J - 1))
+    pγ1 = zeros(2^(s.J - 1))
     pγ0 = ph0(s.J - 1, 1.0)
 
     # Updating
@@ -105,7 +105,7 @@ function fit(
         t > warmup || continue
         pγ1[γcode(c.γ)] += 1
     end
-    return pγ1
+    return pγ1 / (iter - warmup)
 end
 
 function fit(
@@ -122,7 +122,7 @@ function fit(
     J = length(unique(x))
     s = SuffStats(m = m, y = y, x = x)
     c = ChainState(N = s.N, J = s.J, rng = rng)
-    pγ1 = zeros(Int, 2^(s.J - 1))
+    pγ1 = zeros(2^(s.J - 1))
     pγ0 = ph0(s.J - 1, 1.0)
     ygrid = Iterators.product(fill(grid, 2)...)
     ygrid = collect.(ygrid)[:] |> x -> hcat(x...)
@@ -193,7 +193,7 @@ function fit(
     ]
     df = reduce(vcat, dfs)
     filter!([:var1, :var2] => (x, y) -> x < y, df)
-    return pγ1, df
+    return pγ1 / (iter - warmup), df
 end
 
 function train(
