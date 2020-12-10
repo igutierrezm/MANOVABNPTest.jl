@@ -37,4 +37,9 @@ function γvector(J, code)
     return γ
 end
 
-γstr(J, code) = string(γvector(J, code)[2:J]...)
+
+"Return the vector γ associated with code `code`, given `J`"
+γvec(J, code) = γvector(J, code)[2:J]
+
+"Return the vector γ associated with code `code`, given `J`, as a string"
+γstr(J, code) = string(γvec(J, code)...)
