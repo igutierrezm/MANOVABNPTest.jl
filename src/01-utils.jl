@@ -36,3 +36,5 @@ function γvector(J, code)
     end
     return γ
 end
+
+γstr(J, code) = string(γvector(J, code)[2:J]...)

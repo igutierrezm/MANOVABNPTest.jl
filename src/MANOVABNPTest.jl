@@ -22,7 +22,7 @@ include("06-gibbs.jl")
 # Exports
 export Model, SuffStats, suffstats!, ChainState, log_pl, log_ml, ph0, fit, train
 export update_z!, update_γ!, update_α!
-export γcode, γvector
+export γcode, γvector, γstr
 export test_sample
 
 end
