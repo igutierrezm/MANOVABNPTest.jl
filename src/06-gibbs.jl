@@ -86,13 +86,14 @@ function fit(
     m::Model{A, B},
     y::Vector{C},
     x::Vector{Int};
+    K::Int = 5,
     iter::Int = 4000, 
     warmup::Int = iter ÷ 2,
     rng::MersenneTwister = MersenneTwister()
 ) where {A, B, C}
     # Initialization
     s = SuffStats(m = m, y = y, x = x)
-    c = ChainState(N = s.N, J = s.J, rng = rng)
+    c = ChainState(N = s.N, J = s.J, rng = rng, K = [K])
     pγ1 = zeros(2^(s.J - 1))
     pγ0 = ph0(s.J - 1, 1.0)
 
@@ -113,6 +114,7 @@ function fit(
     y::Vector{C},
     x::Vector{Int},
     grid::Vector{Float64};
+    K::Int = 5,
     iter::Int = 4000, 
     warmup::Int = iter ÷ 2,
     rng::MersenneTwister = MersenneTwister()
@@ -121,7 +123,7 @@ function fit(
     D = length(y[1])
     J = length(unique(x))
     s = SuffStats(m = m, y = y, x = x)
-    c = ChainState(N = s.N, J = s.J, rng = rng)
+    c = ChainState(N = s.N, J = s.J, rng = rng, K = [K])
     pγ1 = zeros(2^(s.J - 1))
     pγ0 = ph0(s.J - 1, 1.0)
     ygrid = Iterators.product(fill(grid, 2)...)
