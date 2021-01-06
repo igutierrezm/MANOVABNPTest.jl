@@ -5,6 +5,7 @@
     N::Int
     J::Int
     K̄::Int = 64
+    refresh_rate::Int    = N
     K::Vector{Int}       = [5]
     rng::MersenneTwister = Random.MersenneTwister()
     τ::Vector{Int}       = randperm(rng, N)

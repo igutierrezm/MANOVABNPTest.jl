@@ -3,11 +3,15 @@
     see Sudderth (2006, p. 94, algorithm 2.2)
 """
 function update_z!(c::ChainState, s::SuffStats{A, B, C}) where {A, B, C}
-    @unpack α, z, τ, O, U, rng = c
+    @unpack refresh_rate, α, z, τ, O, U, rng = c
     @unpack n = s
     randperm!(rng, τ)
 
+    counter = 0
     @inbounds @fastmath for i ∈ τ
+        # Recompute from scratch each 30 iterations
+        (counter += 1) % refresh_rate == 0 && suffstats0!(s, c)
+
         # Initialize the search
         z̄ = z[i]
         p̄ = -Inf
@@ -52,7 +56,7 @@ function update_γ!(
     for g = 2:J
         # log-odds (numerator)
         γ[g] = 1
-        suffstats!(s, c)
+        suffstats0!(s, c)
         log_num = log(pγ0[sum(γ)])
         for k ∈ O, j ∈ (1, g)
             log_num += log_ml(s, j, k)
@@ -60,7 +64,7 @@ function update_γ!(
 
         # log-odds (denominator)
         γ[g] = 0
-        suffstats!(s, c)
+        suffstats0!(s, c)
         log_den = log(pγ0[sum(γ)])
         for k ∈ O, j ∈ (1)
             log_den += log_ml(s, j, k)
@@ -89,6 +93,7 @@ function fit(
     K::Int = 5,
     iter::Int = 4000, 
     warmup::Int = iter ÷ 2,
+    refresh_rate::Int = length(x),
     rng::MersenneTwister = MersenneTwister()
 ) where {A, B, C}
     # Initialization
@@ -99,7 +104,7 @@ function fit(
 
     # Updating
     @fastmath for t ∈ 1:iter
-        suffstats!(s, c)
+        suffstats0!(s, c)
         update_z!(c, s)
         update_α!(c, s)
         update_γ!(c, s, pγ0)
@@ -144,7 +149,7 @@ function fit(
     ggrid = zeros(M)
     yi = zeros(2)
     @fastmath for t ∈ 1:iter
-        suffstats!(s, c)
+        suffstats0!(s, c)
         update_z!(c, s)
         update_θ!(c, s)
         update_α!(c, s)

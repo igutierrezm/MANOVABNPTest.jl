@@ -22,6 +22,42 @@ end
 """
     Recompute the sufficient statistics from scratch
 """
+function suffstats0!(s::SuffStats{A, B, C}, c::ChainState) where {A, B, C}
+    @unpack m, y, x, K̄, N, J, n, r, ν, u, S = s
+    @unpack r0, ν0, u0, S0 = m
+    @unpack z, γ, O = c
+    idx = Bool.(ones(N))
+    @inbounds for j = 1:J, k ∈ 1:K̄
+        n[k] = 0
+        @. idx = (x^γ[x] == j) & (z == k)
+        if any(idx)
+            ysub = y[idx]
+            njk = length(ysub)
+            ym = mean(ysub)
+            yv = cov(ysub, corrected = false)
+            ν[j, k] = ν0 + njk
+            r[j, k] = r0 + njk
+            u[j, k] = (r0 * u0 + njk * ym) / r[j, k]
+            S[j, k] = 
+                (Matrix(S0) + reinterpret(Float64, njk * yv  + njk * r0 * (ym - u0) * (ym - u0)' / r[j, k])) |>
+                x -> Symmetric(x) |>
+                x -> cholesky(x)
+        else
+            ν[j, k] = ν0
+            r[j, k] = r0
+            u[j, k] .= u0
+            S[j, k].factors .= S0.factors
+        end
+    end
+    @inbounds @fastmath for i ∈ 1:N 
+        n[z[i]] += 1 
+    end
+    return s
+end
+
+"""
+    Recompute the sufficient statistics from scratch
+"""
 function suffstats!(s::SuffStats{A, B, C}, c::ChainState) where {A, B, C}
     @unpack m, y, x, K̄, N, J, n, r, ν, u, S = s
     @unpack r0, ν0, u0, S0 = m

@@ -1,4 +1,5 @@
 using MANOVABNPTest, StatsBase, LinearAlgebra, StaticArrays, Random
+rng = MersenneTwister(1)
 
 function γvector(J, code)
     γ = zeros(Int, J)
@@ -12,7 +13,7 @@ function γvector(J, code)
     return γ
 end
 
-function test_sample_01(h::Int, l::Int, H0::Int)
+function test_sample_01(D::Int, h::Int, l::Int, H0::Int)
     N = 4 * [50, 150, 300]
     K = [
         0.625 1.498 1.162;
@@ -20,9 +21,9 @@ function test_sample_01(h::Int, l::Int, H0::Int)
         1.051 1.994 1.652
     ]
     γ = γvector(4, H0)
-    Σ = cholesky(collect(I(2)))
+    Σ = cholesky(collect(I(D)))
     x = 1 .+ (0:N[h]-1) .% 4
-    y = rand(N[h], 2) * Σ.U
+    y = rand(N[h], D) * Σ.U
     for i in 1:N[h]
         x[i] == 2 && (y[i, :] .+= K[l, 1] * γ[2])
         x[i] == 3 && (y[i, :] .*= K[l, 2] ^ γ[3])
@@ -30,11 +31,11 @@ function test_sample_01(h::Int, l::Int, H0::Int)
     end
     ȳ, S = mean_and_cov(y)
     y = (y .- ȳ) / cholesky(S).U
-    y = [SVector{2}(y[i, :]) for i ∈ 1:N[h]]
+    y = [SVector{D}(y[i, :]) for i ∈ 1:N[h]]
     return y, x
 end
 
-function test_sample_02(h::Int, l::Int, H0::Int)
+function test_sample_02(D::Int, h::Int, l::Int, H0::Int)
     N = 4 * [50, 150, 300]
     K = [
         0.625 1.498 1.162;
@@ -42,9 +43,9 @@ function test_sample_02(h::Int, l::Int, H0::Int)
         1.051 1.994 1.652
     ]
     γ = γvector(4, H0)
-    Σ = cholesky(collect(I(2)))
+    Σ = cholesky(collect(I(D)))
     x = 1 .+ (0:N[h]-1) .% 4
-    y = rand(N[h], 2) * Σ.U
+    y = rand(N[h], D) * Σ.U
     for i in 1:N[h]
         x[i] == 2 && (y[i, :] .+= K[l, 1] * γ[2])
         x[i] == 3 && (y[i, :] .*= K[l, 2] ^ γ[3])
@@ -53,15 +54,65 @@ function test_sample_02(h::Int, l::Int, H0::Int)
     return y, x
 end
 
-y, x = test_sample_01(1, 1, 1)
-m = MANOVABNPTest.Model(D = 2)
-rng = MersenneTwister(1)
-ChainState(N = 10, J = 4, rng = rng)
+# Exp 1
+D = 2
+m = MANOVABNPTest.Model(D = D)
+y, x = test_sample_01(D, 1, 1, 2)
+pγ = MANOVABNPTest.fit(m, y, x; iter = 4000, refresh_rate = 50, rng = rng)
+println(pγ)
 
-pγ1 = MANOVABNPTest.fit(m, y, x; iter = 4000, rng = rng)
-grid = LinRange(-3, 3, 10) |> collect
-m = MANOVABNPTest.Model(D = 2)
-MANOVABNPTest.fit(m, y, x, grid; iter = 200, rng = rng);
+# Exp 2
+D = 2
+m = MANOVABNPTest.Model(D = D)
+y, x = test_sample_01(D, 1, 1, 3)
+pγ = MANOVABNPTest.fit(m, y, x; iter = 4000, refresh_rate = 50, rng = rng)
+println(pγ)
 
-y, x = test_sample_02(1, 1, 6)
-println(MANOVABNPTest.train(y, x, rng = rng))
+# Exp 3
+D = 10
+m = MANOVABNPTest.Model(D = D)
+y, x = test_sample_01(D, 1, 1, 2)
+pγ = MANOVABNPTest.fit(m, y, x; iter = 4000, refresh_rate = 50, rng = rng)
+println(pγ)
+
+# Exp 4
+D = 10
+m = MANOVABNPTest.Model(D = D)
+y, x = test_sample_01(D, 1, 1, 3)
+pγ = MANOVABNPTest.fit(m, y, x; iter = 4000, refresh_rate = 50, rng = rng)
+println(pγ)
+
+# Exp 5
+D = 10
+m = MANOVABNPTest.Model(D = D)
+y, x = test_sample_01(D, 1, 2, 2)
+pγ = MANOVABNPTest.fit(m, y, x; iter = 4000, refresh_rate = 50, rng = rng)
+println(pγ)
+
+# Exp 6
+D = 10
+m = MANOVABNPTest.Model(D = D)
+y, x = test_sample_01(D, 1, 2, 3)
+pγ = MANOVABNPTest.fit(m, y, x; iter = 4000, refresh_rate = 50, rng = rng)
+println(pγ)
+
+# Exp 7
+D = 10
+m = MANOVABNPTest.Model(D = D)
+y, x = test_sample_01(D, 1, 3, 2)
+pγ = MANOVABNPTest.fit(m, y, x; iter = 4000, refresh_rate = 50, rng = rng)
+println(pγ)
+
+# Exp 8
+D = 10
+m = MANOVABNPTest.Model(D = D)
+y, x = test_sample_01(D, 1, 3, 3)
+pγ = MANOVABNPTest.fit(m, y, x; iter = 4000, refresh_rate = 50, rng = rng)
+println(pγ)
+
+# grid = LinRange(-3, 3, 10) |> collect
+# m = MANOVABNPTest.Model(D = 2)
+# MANOVABNPTest.fit(m, y, x, grid; iter = 200, rng = rng);
+
+# y, x = test_sample_02(1, 1, 6)
+# println(MANOVABNPTest.train(y, x, rng = rng))
