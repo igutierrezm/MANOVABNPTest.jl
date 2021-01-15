@@ -231,8 +231,7 @@ function train(
     )
     y = standardize(ZScoreTransform, y, dims = 1)
     y = [SVector{D}(y[i, :]) for i ∈ 1:N]
-    ps = MANOVABNPTest.fit(m, y, x .+ 1; iter = iter, warmup = warmup, rng = rng)
-    ps = ps / (iter - warmup)
+    ps = MANOVABNPTest.fit(m, y, x; iter = iter, warmup = warmup, rng = rng)
     γs = [γvector(J, u)[2:end] for u in 1:length(ps)]
     DataFrame(hypothesis = γs, prob = ps)
 end

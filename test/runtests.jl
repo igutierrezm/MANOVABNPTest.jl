@@ -1,17 +1,5 @@
-using MANOVABNPTest, StatsBase, LinearAlgebra, StaticArrays, Random
+using DataFrames, MANOVABNPTest, StatsBase, LinearAlgebra, StaticArrays, Random
 rng = MersenneTwister(1)
-
-function γvector(J, code)
-    γ = zeros(Int, J)
-    code -= 1
-    for j = J:-1:2
-        if (code ÷ 2^(j-2)) > 0
-            code -= 2^(j-2)
-            γ[j] = 1
-        end
-    end
-    return γ
-end
 
 function test_sample_01(D::Int, h::Int, l::Int, H0::Int)
     N = 4 * [50, 150, 300]
@@ -114,5 +102,7 @@ println(pγ)
 # m = MANOVABNPTest.Model(D = 2)
 # MANOVABNPTest.fit(m, y, x, grid; iter = 200, rng = rng);
 
-# y, x = test_sample_02(1, 1, 6)
-# println(MANOVABNPTest.train(y, x, rng = rng))
+# Exp 9
+y, x = test_sample_01(2, 1, 1, 2)
+Y = Matrix{Float64}(vcat(y'...))
+println(train(Y, x))
