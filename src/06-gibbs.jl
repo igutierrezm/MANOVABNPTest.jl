@@ -99,7 +99,7 @@ function fit(
     # Initialization
     s = SuffStats(m = m, y = y, x = x)
     c = ChainState(N = s.N, J = s.J, rng = rng, K = [K])
-    pγ1 = zeros(2^(s.J - 1))
+    pγ1 = zeros(s.J - 1)
     pγ0 = ph0(s.J - 1, 1.0)
 
     # Updating
@@ -129,7 +129,7 @@ function fit(
     J = length(unique(x))
     s = SuffStats(m = m, y = y, x = x)
     c = ChainState(N = s.N, J = s.J, rng = rng, K = [K])
-    pγ1 = zeros(2^(s.J - 1))
+    pγ1 = zeros(s.J - 1)
     pγ0 = ph0(s.J - 1, 1.0)
     ygrid = Iterators.product(fill(grid, 2)...)
     ygrid = collect.(ygrid)[:] |> x -> hcat(x...)
