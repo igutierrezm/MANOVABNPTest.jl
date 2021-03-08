@@ -1,3 +1,3 @@
 # MANOVABNPTest
 
-![alt text](images/model.png)
+![alt text](images/model.jpg)
