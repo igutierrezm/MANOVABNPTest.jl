@@ -20,7 +20,7 @@ include("05-logl.jl")
 include("06-gibbs.jl")
 
 # Exports
-export Model, SuffStats, suffstats0!, suffstats!, ChainState, log_pl, log_ml, ph0, fit, train
+export Model, SuffStats, suffstats0!, suffstats!, ChainState, log_pl, log_ml, ph0, fit, train, train_γ
 export update_z!, update_γ!, update_α!
 export γcode, γvector, γstr, γvec
 export test_sample

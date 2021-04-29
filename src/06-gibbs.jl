@@ -235,3 +235,63 @@ function train(
     γs = [γvector(J, u)[2:end] for u in 1:length(ps)]
     DataFrame(hypothesis = γs, prob = ps)
 end
+
+function fit_γ(
+    m::Model{A, B},
+    y::Vector{C},
+    x::Vector{Int};
+    K::Int = 5,
+    iter::Int = 4000, 
+    warmup::Int = iter ÷ 2,
+    refresh_rate::Int = length(x),
+    rng::MersenneTwister = MersenneTwister()
+) where {A, B, C}
+    # Initialization
+    s = SuffStats(m = m, y = y, x = x)
+    c = ChainState(N = s.N, J = s.J, rng = rng, K = [K])
+    pγ1 = zeros(2^(s.J - 1))
+    pγ0 = ph0(s.J - 1, 1.0)
+    γchain = zeros(iter - warmup, s.J)
+
+    # Updating
+    @fastmath for t ∈ 1:iter
+        suffstats0!(s, c)
+        update_z!(c, s)
+        update_α!(c, s)
+        update_γ!(c, s, pγ0)
+        t > warmup || continue
+        γchain[t - warmup, :] = c.γ
+    end
+    return γchain
+end
+
+function train_γ(
+    y::Matrix{Float64}, 
+    x::Vector{Int}; 
+    r0::Int = 1, 
+    v0::Int = size(y, 2) + 2, 
+    u0::Vector{Float64} = zeros(size(y, 2)), 
+    S0::Matrix{Float64} = Matrix{Float64}(I(size(y, 2))), 
+    a0::Float64 = 1.0, 
+    b0::Float64 = 1.0, 
+    z0::Float64 = 1.0,
+    iter::Int   = 4000,
+    warmup::Int = iter ÷ 2,
+    rng::MersenneTwister = MersenneTwister()
+)
+    N, D = size(y)
+    J = length(unique(x))
+    m = MANOVABNPTest.Model(
+        D  = D,
+        r0 = r0,
+        ν0 = v0,
+        u0 = u0,
+        S0 = cholesky(S0),
+        a0 = a0,
+        b0 = b0,
+        ζ0 = z0
+    )
+    y = standardize(ZScoreTransform, y, dims = 1)
+    y = [SVector{D}(y[i, :]) for i ∈ 1:N]
+    MANOVABNPTest.fit_γ(m, y, x; iter = iter, warmup = warmup, rng = rng)
+end

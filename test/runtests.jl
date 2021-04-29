@@ -106,3 +106,8 @@ println(pγ)
 y, x = test_sample_01(2, 1, 1, 2)
 Y = Matrix{Float64}(vcat(y'...))
 println(train(Y, x))
+
+# Exp 10
+y, x = test_sample_01(2, 1, 1, 2)
+Y = Matrix{Float64}(vcat(y'...))
+println(train_γ(Y, x))
