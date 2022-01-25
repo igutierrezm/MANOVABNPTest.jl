@@ -39,7 +39,7 @@ function suffstats0!(s::SuffStats{A, B, C}, c::ChainState) where {A, B, C}
             r[j, k] = r0 + njk
             u[j, k] = (r0 * u0 + njk * ym) / r[j, k]
             S[j, k] = 
-                (Matrix(S0) + reinterpret(Float64, njk * yv  + njk * r0 * (ym - u0) * (ym - u0)' / r[j, k])) |>
+                (Matrix(S0) + Matrix{Float64}(njk * yv  + njk * r0 * (ym - u0) * (ym - u0)' / r[j, k])) |>
                 x -> Symmetric(x) |>
                 x -> cholesky(x)
         else
