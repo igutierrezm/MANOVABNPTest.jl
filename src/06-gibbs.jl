@@ -205,7 +205,8 @@ end
 
 function train(
     y::Matrix{Float64}, 
-    x::Vector{Int}; 
+    x::Vector{Int},
+    grid::Vector{Float64}; 
     r0::Int = 1, 
     v0::Int = size(y, 2) + 2, 
     u0::Vector{Float64} = zeros(size(y, 2)), 
@@ -229,11 +230,14 @@ function train(
         b0 = b0,
         ζ0 = z0
     )
-    y = standardize(ZScoreTransform, y, dims = 1)
+    # y = standardize(ZScoreTransform, y, dims = 1)
     y = [SVector{D}(y[i, :]) for i ∈ 1:N]
-    ps = MANOVABNPTest.fit(m, y, x; iter = iter, warmup = warmup, rng = rng)
-    γs = [γvector(J, u)[2:end] for u in 1:length(ps)]
-    DataFrame(hypothesis = γs, prob = ps)
+    ps = MANOVABNPTest.fit(m, y, x, grid; iter = iter, warmup = warmup, rng = rng)
+    γs, df = [γvector(J, u)[2:end] for u in 1:length(ps)]
+    Dict(
+        :hypotheses => DataFrame(hypothesis = γs, prob = ps),
+        :densities => df
+    )
 end
 
 function fit_γ(
