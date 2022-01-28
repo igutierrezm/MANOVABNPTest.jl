@@ -1,6 +1,3 @@
-# Install JuliaConnectoR
-install.packages("JuliaConnectoR") # includes juliaEval, juliaGet, JuliaImport
-
 # Activate a Julia environment
 library(JuliaConnectoR)
 Pkg <- juliaImport('Pkg')
