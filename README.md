@@ -19,7 +19,7 @@ julia> Pkg.add("MANOVABNPTest")
 
 ## Getting started
 
-After installation, you can execute the hypothesis test by calling `train()`. This function has 3 main arguments: `y` (an $N \times D$ matrix), $x$ (an $N$-dimensional vector of group labels) and `grid` (an $M$-dimensional grid indicating $M$ grid points for the purposes of plotting). Here is a minimal example:
+After installation, you can execute the hypothesis test by calling `train()`. This function has 3 main arguments: `y` (an `N x D` matrix), $x$ (an `N`-dimensional vector of group labels) and `grid` (an `M`-dimensional grid indicating `M` grid points for the purposes of plotting). Here is a minimal example:
 ```
 using MANOVABNPTest, Random
 N = 200
