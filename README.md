@@ -57,7 +57,7 @@ R> Pkg$activate("<dir>")
 ```
 Next, install `MANOVABNPTest.jl` as follows:
 ```R
-R> juliaEval('Pkg.add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")')
+R> Pkg$add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")
 ```
 Next, import the Julia packages `MANOVABNPTest` and `Random` as follows:
 ```R
