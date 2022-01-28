@@ -26,7 +26,7 @@ julia> Pkg.add("MANOVABNPTest")
 ## Getting started
 
 After installation, you can execute the hypothesis test by calling `train()`. This function has 3 main arguments: `y` (an `N x D` matrix), `x` (an `N`-dimensional vector of group labels) and `grid` (an `M`-dimensional grid indicating `M` grid points for the purposes of plotting). You can also add a random number generator `rng` if desired. Here is a minimal example:
-```
+```julia
 # Load the relevant datasets
 using MANOVABNPTest
 using Random
@@ -51,14 +51,13 @@ R> install.packages("JuliaConnectoR")
 ```
 Next, activate a Julia environment. For example, if your project is located as `<dir>`, you should create the environment as follows:
 ```R
-# Activate a Julia environment
 R> library(JuliaConnectoR)
 R> Pkg <- juliaImport('Pkg')
 R> Pkg$activate("<dir>")
 ```
 Next, install `MANOVABNPTest.jl` as follows:
 ```R
-R> juliaEval('Pkg.add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")')
+R> Pkg$add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")
 ```
 Next, import the Julia packages `MANOVABNPTest` and `Random` as follows:
 ```R
