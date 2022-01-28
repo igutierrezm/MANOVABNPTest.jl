@@ -95,7 +95,7 @@ head(posterior_f, 3)
 
 As you can see, the results are already in tidy format, so they are easy to use in combination with any ploting library that explotes the grammar of graphics, such as `ggplot2`. However, the columns `posterior_f` are not easy to interpret. Here is the definition of each variable:
 
-- `f`: The value of posterior predictive density when *y*[`var1`] = `y1`, *y*[`var2`] = `y2` and *x* = `j`.
+- `f`: The value of posterior predictive density when y[`var1`] = `y1`, y[`var2`] = `y2` and x = `j`.
 - `j`: The group indicator.
 - `var1`, `var2`: Which outcomes are considered in this row.
 - `y1`: The value of the variable with ID `var1` considered in this row.
