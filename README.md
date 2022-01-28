@@ -9,18 +9,18 @@ Install with the Julia package manager Pkg:
 
 ```julia
 # Press ']' to enter the Pkg REPL mode.
-pkg> add MANOVABNPTest
+pkg> add https://github.com/igutierrezm/MANOVABNPTest.jl
 ```
 or
 ```julia
 julia> using Pkg; 
-julia> Pkg.add("MANOVABNPTest")
+julia> Pkg.add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")
 ```
 We recommed to activate a local environment before installing this package. For example, if you want to install `MANOVABNPTest.jl` to use it in a project located at `<dir>`, you should install `MANOVABNPTest.jl` as follows:
 ```julia
 julia> using Pkg; 
 julia> Pkg.activate("<dir>")
-julia> Pkg.add("MANOVABNPTest")
+julia> Pkg.add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")
 ```
 
 ## Getting started
