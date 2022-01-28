@@ -38,12 +38,11 @@ R users can also epxloit this package using the R package `JuliaConnectoR`. Firs
 ```R
 R> install.packages("JuliaConnectoR")
 ```
-Once `JuliaConnectoR` is installed, install `MANOVABNPTest.jl` as follows:
+Next, install `MANOVABNPTest.jl` as follows:
 ```R
 R> library(JuliaConnectoR)
 R> juliaEval('Pkg.add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")')
 ```
-
 Next, import the Julia packages `MANOVABNPTest` and `Random` (neccesary to fix the seed) as follows:
 ```R
 R> MANOVABNPTest <- juliaImport('MANOVABNPTest')
@@ -59,6 +58,12 @@ out <- MANOVABNPTest$train(y, x, grid, rng = rng)
 ```
 Note that the result is a pointer to a Julia object. To collect the results, we can proceed as follows:
 ```R
-R> posterior_g <- data.frame(fit_J$hypotheses) # p(gamma \mid y, x)
-R> posterior_f <- data.frame(fit_J$densities)  # E[f \mid y, x]
+R> posterior_g <- data.frame(out$hypotheses) # p(gamma \mid y, x)
+R> posterior_f <- data.frame(out$densities)  # E[f \mid y, x]
 ```
+
+## Notes
+
+1. Currently, this package is a prototype. I'm plannig to convert this prototype into a fully fledged package (including a proper documentation) during the following 6 months.
+
+2. Currently, the package has been tested under Julia 1.5.3 and R 4.0.4. For full reproducibility, consider running this example in a Docker container generated from the image \url{https://hub.docker.com/r/igutierrez1988/manovabnptest-example}.
