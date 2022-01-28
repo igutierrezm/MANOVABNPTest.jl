@@ -62,6 +62,10 @@ R> posterior_g <- data.frame(out$hypotheses) # p(gamma \mid y, x)
 R> posterior_f <- data.frame(out$densities)  # E[f \mid y, x]
 ```
 
+## Gallery
+
+More elaborate examples are stored in `extras/`. 
+
 ## Notes
 
 1. Currently, this package is a prototype. I'm plannig to convert this prototype into a fully fledged package (including a proper documentation) during the following 6 months.
