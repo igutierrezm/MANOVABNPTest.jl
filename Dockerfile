@@ -16,7 +16,8 @@ RUN rm -rf ${JULIA_TAR}
 RUN ln -s /opt/julia-1.5.3/bin/julia /usr/local/bin/julia
 
 # Install some useful R packages
-RUN install2.r dplyr ggplot2 JuliaConnectoR languageserver readr
+RUN install2.r --error --skipinstalled --ncpus -1 \
+    dplyr ggplot2 JuliaConnectoR languageserver readr
 
 # To build this image, run
 # docker build -t julia_r:1.5.3 .
