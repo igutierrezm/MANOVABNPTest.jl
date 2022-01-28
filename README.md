@@ -94,11 +94,13 @@ head(posterior_f, 3)
 ```
 
 As you can see, the results are already in tidy format, so they are easy to use in combination with any ploting library that explotes the grammar of graphics, such as `ggplot2`. However, the columns `posterior_f` are not easy to interpret. Here is the definition of each variable:
+
+- `f`: The value of posterior predictive density when y[`var1`] = `y1` and y[`var2`] = `y2`.
 - `j`: The group indicator.
 - `var1`, `var2`: Which outcomes are considered in this row.
 - `y1`: The value of the variable with ID `var1` considered in this row.
 - `y2`: The value of the variable with ID `var2` considered in this row.
-- `f`: The value of posterior predictive density when y[`var1`] = `y1` and y[`var2`] = `y2`.
+
 Using this information, you can then plot each posible bivariate density.
 
 ## Gallery
