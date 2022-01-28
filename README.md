@@ -51,7 +51,6 @@ R> install.packages("JuliaConnectoR")
 ```
 Next, activate a Julia environment. For example, if your project is located as `<dir>`, you should create the environment as follows:
 ```R
-# Activate a Julia environment
 R> library(JuliaConnectoR)
 R> Pkg <- juliaImport('Pkg')
 R> Pkg$activate("<dir>")
