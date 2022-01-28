@@ -16,7 +16,7 @@ or
 julia> using Pkg; 
 julia> Pkg.add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")
 ```
-We recommed to activate a local environment before installing this package. For example, if you want to install `MANOVABNPTest.jl` to use it in a project located at `<dir>`, you should install `MANOVABNPTest.jl` as follows:
+We recommend activating a local environment before installing this package. For example, if you want to install `MANOVABNPTest.jl` to use it in a project located at `<dir>`, you should install `MANOVABNPTest.jl` as follows:
 ```julia
 julia> using Pkg; 
 julia> Pkg.activate("<dir>")
@@ -44,7 +44,15 @@ The result is a named tuple with 2 `DataFrame`s: `hypotheses` (containing the po
 
 ## Using MANOVABNP.jl from R
 
-R users can also use this package thank to the R package `JuliaConnectoR`. First, install `JuliaConnectoR`:
+R users can also use this package thank to the R package `JuliaConnectoR`. Verify, install Julia.
+
+> **Tip:** We recommend installing Julia following these [platform-specific instructions](https://julialang.org/downloads/platform/).
+
+Next, make sure that JuliaConnectoR can call Julia:
+
+> **Tip:** The easiest way to ensure this is by adding julia's `bin/` folder to your `PATH` environment variable. This is also mentioned in Julia's [platform-specific instructions](https://julialang.org/downloads/platform/)
+
+Next, install `JuliaConnectoR` as usual:
 ```R
 install.packages("JuliaConnectoR")
 ```
