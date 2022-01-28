@@ -46,22 +46,22 @@ The result is a named tuple with 2 `DataFrame`s: `hypotheses` (containing the po
 
 R users can also use this package thank to the R package `JuliaConnectoR`. First, install `JuliaConnectoR`:
 ```R
-R> install.packages("JuliaConnectoR")
+install.packages("JuliaConnectoR")
 ```
 Next, create/activate a Julia environment. For example, if your project is located as `<dir>`, you should create the environment as follows:
 ```R
-R> library(JuliaConnectoR)
-R> Pkg <- juliaImport('Pkg')
-R> Pkg$activate("<dir>")
+library(JuliaConnectoR)
+Pkg <- juliaImport('Pkg')
+Pkg$activate("<dir>")
 ```
 Next, install `MANOVABNPTest.jl` as follows:
 ```R
-R> Pkg$add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")
+Pkg$add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")
 ```
 Next, import the Julia packages `MANOVABNPTest` and `Random` as follows:
 ```R
-R> MANOVABNPTest <- juliaImport('MANOVABNPTest')
-R> Random <- juliaImport('Random')
+MANOVABNPTest <- juliaImport('MANOVABNPTest')
+Random <- juliaImport('Random')
 ```
 After this setup, we can execute our hypothesis test in R just as in Julia. Here is a minimal example:
 ```R
@@ -74,8 +74,8 @@ out <- MANOVABNPTest$train(y, x, grid, rng = rng)
 ```
 Note that the result is a pointer to a Julia object. To collect the results, we can proceed as follows:
 ```R
-R> posterior_g <- data.frame(out$hypotheses) # p(gamma | y, x)
-R> posterior_f <- data.frame(out$densities)  # p(y* | y, x)
+posterior_g <- data.frame(out$hypotheses) # p(gamma | y, x)
+posterior_f <- data.frame(out$densities)  # p(y* | y, x)
 ```
 
 ## Gallery
