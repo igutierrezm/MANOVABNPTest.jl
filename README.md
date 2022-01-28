@@ -78,6 +78,23 @@ posterior_g <- data.frame(out$hypotheses) # p(gamma | y, x)
 posterior_f <- data.frame(out$densities)  # p(y* | y, x)
 ```
 
+Here is a glimpse the collected results
+```R
+head(posterior_g, 3)
+#   hypothesis   prob
+# 1  [0, 0, 0] 0.7715
+# 2  [1, 0, 0] 0.0055
+# 3  [0, 1, 0] 0.2120
+
+head(posterior_f, 3)
+#   j var1 var2   y1 y2            f
+# 1 1    1    2 -3.0 -3 2.802552e-05
+# 2 1    1    2 -2.9 -3 3.213636e-05
+# 3 1    1    2 -2.8 -3 3.708808e-05
+```
+
+As you can see, the results are already in tidy format, so they are easy to use in combination with any ploting library that explotes the grammar of graphics, such as `ggplot2`.
+
 ## Gallery
 
 More elaborate examples are stored in `extras/`. 
