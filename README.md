@@ -1,7 +1,7 @@
 # MANOVABNPTest.jl
 
-A Julia package that implements the (BNP) MANOVA model described in 
-Gutiérrez et al. (2021). See the documentation for details and the getting started vignette for a working example.
+A Julia package that implements the Bayesian nonparametric (BNP) MANOVA model described in 
+Gutiérrez et al. (2022).
 
 ## Installation
 
@@ -32,23 +32,23 @@ using MANOVABNPTest
 using Random
 
 # Simulate (y, x, grid)
-y = randn(100, 2);
-x = 1 .+ collect(0:99) .% 4;
-grid = collect(-3.0:0.1:3.0);
+rng = MersenneTwister(1)
+grid = collect(-3.0:0.1:3.0)
+x = 1 .+ collect(0:99) .% 4
+y = randn(rng, 100, 2)
 
 # Fit the model
-rng = MersenneTwister(1);
 out = train(y, x, grid; rng);
 ```
 The result is a named tuple with 2 `DataFrame`s: `hypotheses` (containing the posterior probability of each hypothesis) and `densities` (containing the posterior predictive distribution over a cartesian product of the selected grid of points). Both dataframes are already in tidy format, so they are easy to use in combination with any ploting library that explotes the grammar of graphics, such as `AlgebraOfGraphics.jl`.
 
 ## Using MANOVABNP.jl from R
 
-R users can also exploit this package using the R package `JuliaConnectoR`. First, install R and Julia. Next, install `JuliaConnectoR` as follows:
+R users can also use this package thank to the R package `JuliaConnectoR`. First, install `JuliaConnectoR`:
 ```R
 R> install.packages("JuliaConnectoR")
 ```
-Next, activate a Julia environment. For example, if your project is located as `<dir>`, you should create the environment as follows:
+Next, create/activate a Julia environment. For example, if your project is located as `<dir>`, you should create the environment as follows:
 ```R
 R> library(JuliaConnectoR)
 R> Pkg <- juliaImport('Pkg')
@@ -65,6 +65,7 @@ R> Random <- juliaImport('Random')
 ```
 After this setup, we can execute our hypothesis test in R just as in Julia. Here is a minimal example:
 ```R
+set.seed(1)
 y <- matrix(rnorm(200), 100, 2)
 x <- as.integer(1 + 0:99 %% 4)
 grid <- seq(-3, 3, by = 0.1)
