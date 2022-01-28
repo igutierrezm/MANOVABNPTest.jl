@@ -50,7 +50,7 @@ R users can also use this package thank to the R package `JuliaConnectoR`. Verif
 
 Next, make sure that JuliaConnectoR can call Julia:
 
-> **Tip:** The easiest way to ensure this is by adding Julia's `bin/` folder to your `PATH` environment variable. This is also mentioned in Julia's [platform-specific instructions](https://julialang.org/downloads/platform/)
+> **Tip:** The easiest way to ensure this is by adding Julia's `bin/` folder to your `PATH` environment variable. This is also explained in detail in Julia's [platform-specific instructions](https://julialang.org/downloads/platform/). It is important to understand that installing Julia is not enough, it must also be reachable from R.
 
 Next, install `JuliaConnectoR` as usual:
 ```R
