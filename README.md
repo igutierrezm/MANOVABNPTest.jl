@@ -16,7 +16,7 @@ or
 julia> using Pkg; 
 julia> Pkg.add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")
 ```
-We recommend activating a local environment before installing this package. For example, if you want to install `MANOVABNPTest.jl` to use it in a project located at `<dir>`, you should install `MANOVABNPTest.jl` as follows:
+We recommend you create a Pkg environment for each project you use JuMP for, instead of adding lots of packages to the global environment. The [Pkg manager documentation](https://julialang.github.io/Pkg.jl/v1/environments/) has more information on this topic. For example, if you want to install `MANOVABNPTest.jl` to use it in a project located at `<dir>`, you should install `MANOVABNPTest.jl` as follows:
 ```julia
 julia> using Pkg; 
 julia> Pkg.activate("<dir>")
