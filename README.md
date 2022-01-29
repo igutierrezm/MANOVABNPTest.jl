@@ -40,11 +40,11 @@ y = randn(rng, 100, 2)
 # Fit the model
 out = train(y, x, grid; rng);
 ```
-The result is a named tuple with 2 `DataFrame`s: `hypotheses` (containing the posterior probability of each hypothesis) and `densities` (containing the posterior predictive distribution over a cartesian product of the selected grid of points). Both dataframes are already in tidy format, so they are easy to use in combination with any ploting library that explotes the grammar of graphics, such as `AlgebraOfGraphics.jl`.
+The result is a named tuple with 2 `DataFrame`s: `hypotheses` (containing the posterior probability of each hypothesis) and `densities` (containing the posterior predictive distribution over a cartesian product of the selected grid of points). Both dataframes are already in tidy format, so they are easy to use in combination with any ploting library that explotes the grammar of graphics, such as [`AlgebraOfGraphics.jl`](http://juliaplots.org/AlgebraOfGraphics.jl/dev/).
 
 ## Using MANOVABNP.jl from R
 
-R users can also use this package thank to the R package `JuliaConnectoR`. Verify, install Julia.
+R users can also use this package thanks to the R package `JuliaConnectoR`. Verify, install Julia.
 
 > **Tip:** We recommend installing Julia following these [platform-specific instructions](https://julialang.org/downloads/platform/).
 
