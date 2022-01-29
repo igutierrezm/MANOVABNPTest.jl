@@ -101,7 +101,7 @@ head(posterior_f, 3)
 # 3 1    1    2 -2.8 -3 3.708808e-05
 ```
 
-As you can see, the results are already in tidy format, so they are easy to use in combination with any ploting library that explotes the grammar of graphics, such as `ggplot2`. However, the columns `posterior_f` are not easy to interpret. Here is the definition of each variable:
+As you can see, the results are already in tidy format, so they are easy to use in combination with any ploting library that explotes the grammar of graphics, such as [`ggplot2`](https://ggplot2.tidyverse.org/). However, the columns `posterior_f` are not easy to interpret. Here is the definition of each variable:
 
 - `f`: The value of posterior predictive density when y[`var1`] == `y1`, y[`var2`] == `y2` and x == `j`.
 - `j`: The group indicator.
