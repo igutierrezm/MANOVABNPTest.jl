@@ -25,7 +25,7 @@ julia> Pkg.add(url = "https://github.com/igutierrezm/MANOVABNPTest.jl")
 
 ## Getting started
 
-After installation, you can execute the hypothesis test by calling `train()`. This function has 3 main arguments: `y` (an `N x D` matrix), `x` (an `N`-dimensional vector of group labels) and `grid` (an `M`-dimensional grid indicating `M` grid points for the purposes of plotting). You can also add a random number generator `rng` if desired. Here is a minimal example:
+After installation, you can execute the hypothesis test by calling `train()`. This function has 3 main arguments: `y` (an `N x D` matrix of outcomes), `x` (an `N`-dimensional vector of group labels) and `grid` (an `M`-dimensional grid indicating `M` grid points for the purposes of plotting). You can also add a random number generator `rng` if desired. Here is a minimal example:
 ```julia
 # Load the relevant datasets
 using MANOVABNPTest
